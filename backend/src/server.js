@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const client = require('prom-client');
 require('dotenv').config();
 
+const connectDatabase = require('./config/db');
 const healthRoutes = require('./routes/health.routes');
 const incidentRoutes = require('./routes/incident.routes');
 const { notFoundHandler, errorHandler } = require('./middleware/error.middleware');
@@ -35,6 +36,17 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`OpsDesk backend running on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await connectDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`OpsDesk backend running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start backend:', error.message);
+    process.exit(1);
+  }
+}
+
+startServer();

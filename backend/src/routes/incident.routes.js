@@ -1,49 +1,75 @@
 ﻿const express = require('express');
+const Incident = require('../models/incident.model');
 
 const router = express.Router();
 
-const incidents = [
-  {
-    id: 'inc-001',
-    title: 'API latency spike',
-    severity: 'P2',
-    status: 'investigating',
-    owner: 'platform-team',
-    createdAt: new Date().toISOString()
-  }
-];
+router.get('/', async (req, res, next) => {
+  try {
+    const incidents = await Incident.find().sort({ createdAt: -1 });
 
-router.get('/', (req, res) => {
-  res.status(200).json({
-    count: incidents.length,
-    data: incidents
-  });
+    res.status(200).json({
+      count: incidents.length,
+      data: incidents
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.post('/', (req, res) => {
-  const { title, severity, owner } = req.body;
+router.post('/', async (req, res, next) => {
+  try {
+    const { title, severity, owner } = req.body;
 
-  if (!title || !severity || !owner) {
-    return res.status(400).json({
-      error: 'title, severity, and owner are required'
+    if (!title || !severity || !owner) {
+      return res.status(400).json({
+        error: 'title, severity, and owner are required'
+      });
+    }
+
+    const incident = await Incident.create({
+      title,
+      severity,
+      owner
     });
+
+    return res.status(201).json({
+      message: 'Incident created',
+      data: incident
+    });
+  } catch (error) {
+    next(error);
   }
+});
 
-  const incident = {
-    id: `inc-${String(incidents.length + 1).padStart(3, '0')}`,
-    title,
-    severity,
-    status: 'open',
-    owner,
-    createdAt: new Date().toISOString()
-  };
+router.patch('/:id/status', async (req, res, next) => {
+  try {
+    const { status } = req.body;
 
-  incidents.push(incident);
+    if (!status) {
+      return res.status(400).json({
+        error: 'status is required'
+      });
+    }
 
-  return res.status(201).json({
-    message: 'Incident created',
-    data: incident
-  });
+    const incident = await Incident.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!incident) {
+      return res.status(404).json({
+        error: 'Incident not found'
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Incident status updated',
+      data: incident
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
