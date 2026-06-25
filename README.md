@@ -1,4 +1,8 @@
-﻿# OpsDesk DevSecOps Platform
+## Live DevSecOps Workflow
+
+![OpsDesk Live DevSecOps Workflow](screenshots/opsdesk-live-workflow-pro.gif)
+  
+ # OpsDesk DevSecOps Platform
 
 OpsDesk is a full-stack DevSecOps platform built to demonstrate modern application delivery from local development to Kubernetes, CI/CD, security scanning, monitoring, GitOps, and future cloud infrastructure readiness.
 
@@ -294,6 +298,4 @@ This project demonstrates:
 Ali Zafar
 OpsDesk DevSecOps Platform
 
-## Live DevSecOps Workflow
 
-![OpsDesk Live DevSecOps Workflow](screenshots/opsdesk-live-workflow-pro.gif)
