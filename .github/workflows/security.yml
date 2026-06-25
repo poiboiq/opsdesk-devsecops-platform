@@ -75,7 +75,8 @@ jobs:
           version: "v1.30.0"
 
       - name: Render Kubernetes manifests
-        run: kubectl kustomize k8s/base > rendered-base.yaml
+        run: |
+          kubectl kustomize k8s/base > rendered-base.yaml
           kubectl kustomize k8s/monitoring > rendered-monitoring.yaml
           cat rendered-base.yaml rendered-monitoring.yaml > rendered-manifests.yaml
 
@@ -87,5 +88,3 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: "1"
           ignore-unfixed: true
-
-

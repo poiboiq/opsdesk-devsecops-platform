@@ -62,7 +62,8 @@ jobs:
           version: "v1.30.0"
 
       - name: Render Kubernetes manifests
-        run: kubectl kustomize k8s/base > rendered-base.yaml
+        run: |
+          kubectl kustomize k8s/base > rendered-base.yaml
           kubectl kustomize k8s/monitoring > rendered-monitoring.yaml
           cat rendered-base.yaml rendered-monitoring.yaml > rendered-manifests.yaml
 
@@ -73,5 +74,3 @@ jobs:
           grep -q "kind: Service" rendered-manifests.yaml
           grep -q "namespace: opsdesk" rendered-manifests.yaml
           grep -q "namespace: monitoring" rendered-manifests.yaml
-
-
