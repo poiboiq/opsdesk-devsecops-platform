@@ -293,3 +293,7 @@ This project demonstrates:
 
 Ali Zafar
 OpsDesk DevSecOps Platform
+
+## Live DevSecOps Workflow
+
+![OpsDesk Live DevSecOps Workflow](screenshots/opsdesk-live-workflow-pro.gif)
