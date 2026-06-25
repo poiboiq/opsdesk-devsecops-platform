@@ -74,3 +74,4 @@ jobs:
           grep -q "namespace: opsdesk" rendered-manifests.yaml
           grep -q "namespace: monitoring" rendered-manifests.yaml
 
+
