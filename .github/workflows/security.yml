@@ -62,7 +62,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   kubernetes-config-scan:
-    name: Kubernetes Config Scan
+    name: Kubernetes and GitOps Config Scan
     runs-on: ubuntu-latest
 
     steps:
@@ -74,13 +74,14 @@ jobs:
         with:
           version: "v1.30.0"
 
-      - name: Render Kubernetes manifests
+      - name: Render Kubernetes and GitOps manifests
         run: |
           kubectl kustomize k8s/base > rendered-base.yaml
           kubectl kustomize k8s/monitoring > rendered-monitoring.yaml
-          cat rendered-base.yaml rendered-monitoring.yaml > rendered-manifests.yaml
+          kubectl kustomize argocd > rendered-argocd.yaml
+          cat rendered-base.yaml rendered-monitoring.yaml rendered-argocd.yaml > rendered-manifests.yaml
 
-      - name: Scan Kubernetes manifests with Trivy
+      - name: Scan Kubernetes and GitOps manifests with Trivy
         uses: aquasecurity/trivy-action@0.35.0
         with:
           scan-type: config

@@ -1,0 +1,28 @@
+﻿apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opsdesk-monitoring
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: opsdesk-monitoring
+    app.kubernetes.io/part-of: opsdesk-devsecops-platform
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: opsdesk
+
+  source:
+    repoURL: https://github.com/poiboiq/opsdesk-devsecops-platform.git
+    targetRevision: main
+    path: k8s/monitoring
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

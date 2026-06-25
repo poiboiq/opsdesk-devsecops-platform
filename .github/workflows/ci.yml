@@ -61,16 +61,20 @@ jobs:
         with:
           version: "v1.30.0"
 
-      - name: Render Kubernetes manifests
+      - name: Render Kubernetes and GitOps manifests
         run: |
           kubectl kustomize k8s/base > rendered-base.yaml
           kubectl kustomize k8s/monitoring > rendered-monitoring.yaml
-          cat rendered-base.yaml rendered-monitoring.yaml > rendered-manifests.yaml
+          kubectl kustomize argocd > rendered-argocd.yaml
+          cat rendered-base.yaml rendered-monitoring.yaml rendered-argocd.yaml > rendered-manifests.yaml
 
-      - name: Verify rendered Kubernetes manifests
+      - name: Verify rendered Kubernetes and GitOps manifests
         run: |
           test -s rendered-manifests.yaml
           grep -q "kind: Deployment" rendered-manifests.yaml
           grep -q "kind: Service" rendered-manifests.yaml
+          grep -q "kind: Application" rendered-manifests.yaml
+          grep -q "kind: AppProject" rendered-manifests.yaml
           grep -q "namespace: opsdesk" rendered-manifests.yaml
           grep -q "namespace: monitoring" rendered-manifests.yaml
+          grep -q "namespace: argocd" rendered-manifests.yaml
