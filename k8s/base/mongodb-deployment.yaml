@@ -17,6 +17,12 @@ spec:
       labels:
         app: mongodb
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mongodb
           image: mongo:7
@@ -34,9 +40,20 @@ spec:
                 secretKeyRef:
                   name: opsdesk-secrets
                   key: MONGO_INITDB_ROOT_PASSWORD
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: mongodb-storage
               mountPath: /data/db
+            - name: mongodb-configdb
+              mountPath: /data/configdb
+            - name: mongodb-tmp
+              mountPath: /tmp
           startupProbe:
             tcpSocket:
               port: 27017
@@ -66,3 +83,7 @@ spec:
         - name: mongodb-storage
           persistentVolumeClaim:
             claimName: mongodb-data
+        - name: mongodb-configdb
+          emptyDir: {}
+        - name: mongodb-tmp
+          emptyDir: {}
