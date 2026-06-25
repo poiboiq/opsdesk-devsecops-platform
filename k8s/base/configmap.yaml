@@ -1,0 +1,7 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opsdesk-config
+  namespace: opsdesk
+data:
+  BACKEND_PORT: "5000"

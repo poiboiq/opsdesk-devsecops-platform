@@ -1,25 +1,37 @@
-﻿const mongoose = require('mongoose');
+﻿const mongoose = require("mongoose");
 
-async function connectDatabase() {
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const connectDB = async () => {
   const mongoUri = process.env.MONGO_URI;
 
   if (!mongoUri) {
-    throw new Error('MONGO_URI is not defined');
+    console.error("MONGO_URI is not configured. Backend will keep running but readiness will fail.");
+    return;
   }
 
-  mongoose.connection.on('connected', () => {
-    console.log('MongoDB connected');
-  });
+  let attempt = 0;
 
-  mongoose.connection.on('error', (error) => {
-    console.error('MongoDB connection error:', error.message);
-  });
+  while (true) {
+    attempt += 1;
 
-  mongoose.connection.on('disconnected', () => {
-    console.warn('MongoDB disconnected');
-  });
+    try {
+      await mongoose.connect(mongoUri);
+      console.log("MongoDB connected");
+      return;
+    } catch (error) {
+      console.error(`MongoDB connection failed on attempt ${attempt}: ${error.message}`);
+      await sleep(5000);
+    }
+  }
+};
 
-  await mongoose.connect(mongoUri);
-}
+mongoose.connection.on("disconnected", () => {
+  console.warn("MongoDB disconnected");
+});
 
-module.exports = connectDatabase;
+mongoose.connection.on("error", (error) => {
+  console.error(`MongoDB error: ${error.message}`);
+});
+
+module.exports = connectDB;
