@@ -36,3 +36,9 @@ Thumbs.db
 *.key
 id_rsa
 id_rsa.pub
+
+# Terraform local state and secrets
+**/.terraform/
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
